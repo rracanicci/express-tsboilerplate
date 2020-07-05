@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dist/bin/server",
-    "dev": "npx nodemon --exec npm start",
+    "debug": "export DEBUG=app:* && npx nodemon --exec npm start",
     "prebuild": "rm -r dist/* || true",
     "build": "npx tsc",
     "postbuild": "cp -r src/img dist/img && cp -r src/public dist/public && cp -r src/views dist/views"
@@ -29,6 +29,7 @@
     "lodash": "^4.17.15",
     "morgan": "^1.10.0",
     "pug": "^3.0.0",
+    "reflect-metadata": "^0.1.13",
     "serve-favicon": "^2.5.0",
     "typescript": "^3.9.6"
   },

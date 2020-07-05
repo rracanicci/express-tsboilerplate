@@ -1,4 +1,4 @@
-import { getVar, string2Bool } from "../utils/parsers";
+import { getVar, string2Bool } from '../utils/parsers';
 
 /*
   type denifitions

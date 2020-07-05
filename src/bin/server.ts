@@ -1,21 +1,22 @@
-import debug from "debug";
-import http from "http";
-import app from "../app";
-import { ConfigType } from "../config";
+import 'reflect-metadata';
+import debug from 'debug';
+import http from 'http';
+import app from '../app';
+import { ConfigType } from '../config';
 
 /*
-    declarations
+  declarations
 */
-const logger             = debug('app:server');
+const logger = debug('app:server');
 const config: ConfigType = app.get('config');
 
 /*
-    set PORT on express
+  set PORT on express
 */
 app.set('port', config.app.port);
 
 /*
-    setup HTTP server
+  setup HTTP server
 */
 const server = http.createServer(app);
 

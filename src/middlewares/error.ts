@@ -1,6 +1,8 @@
-import { InternalServerError } from "http-errors";
-import { ErrorRequestHandler, RequestHandler, Request, Response, NextFunction } from "express";
-import { ConfigType } from "../config";
+import { InternalServerError } from 'http-errors';
+import { 
+  ErrorRequestHandler, RequestHandler, Request, Response, NextFunction
+} from 'express';
+import { ConfigType } from '../config';
 
 export const handleError: ErrorRequestHandler = (err, req, res, next) => {
   const config: ConfigType = req.app.get('config');
