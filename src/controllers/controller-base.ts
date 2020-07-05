@@ -1,10 +1,14 @@
-import { Express } from 'express';
+import { Express, RequestHandler } from 'express';
 import { throwError } from '../middlewares/error';
+import debug from 'debug';
+
+const logger = debug('app:controllerbase');
 
 /* 
   supported Request Methods
 */
-type RequestMethod = 'get' | 'post' | 'delete' | 'options' | 'put' | 'all';
+type RequestMethod
+  = 'get' | 'post' | 'delete' | 'options' | 'put' | 'all' | 'use';
 
 /*
   base interface for a router type
@@ -12,7 +16,8 @@ type RequestMethod = 'get' | 'post' | 'delete' | 'options' | 'put' | 'all';
 interface RouteBaseType {
   path: string;
   requestMethod: RequestMethod;
-  routeHandlerMethod: string | symbol;
+  routeHandler: string | symbol;
+  preReqs: RequestHandler [];
 }
 
 /*
@@ -79,12 +84,15 @@ function addRoute(route: RouteBaseType | null, target: Object): void {
 /*
   method to bind a new controller method
 */
-function routerFactory(path: string, requestMethod: RequestMethod) {
+function routerFactory(
+  path: string, requestMethod: RequestMethod, ...preReqs: RequestHandler[]
+) {
   return (target: Object, routeHandler: string | symbol): void => {
     addRoute({
       path: path,
       requestMethod: requestMethod,
-      routeHandlerMethod: routeHandler
+      routeHandler: routeHandler,
+      preReqs: preReqs
     }, target.constructor);
   };
 }
@@ -103,60 +111,84 @@ export const Controller = (prefix: string = ''): ClassDecorator => {
 /*
   get router method decorator
 */
-export const Get = (path: string): MethodDecorator => {
-  return routerFactory(path, 'get');
+export const Get = (
+  path: string, ...preReqs: RequestHandler[]
+): MethodDecorator => {
+  return routerFactory(path, 'get', ...preReqs);
 };
 
 /*
   post router method decorator
 */
-export const Post = (path: string): MethodDecorator => {
-  return routerFactory(path, 'post');
+export const Post = (
+  path: string, ...preReqs: RequestHandler[]
+): MethodDecorator => {
+  return routerFactory(path, 'post', ...preReqs);
 };
 
 /*
   delete router method decorator
 */
-export const Delete = (path: string): MethodDecorator => {
-  return routerFactory(path, 'delete');
+export const Delete = (
+  path: string, ...preReqs: RequestHandler[]
+): MethodDecorator => {
+  return routerFactory(path, 'delete', ...preReqs);
 };
 
 /*
   options router method decorator
 */
-export const Options = (path: string): MethodDecorator => {
-  return routerFactory(path, 'options');
+export const Options = (
+  path: string, ...preReqs: RequestHandler[]
+): MethodDecorator => {
+  return routerFactory(path, 'options', ...preReqs);
 };
 
 /*
   put router method decorator
 */
-export const Put = (path: string): MethodDecorator => {
-  return routerFactory(path, 'put');
+export const Put = (
+  path: string, ...preReqs: RequestHandler[]
+): MethodDecorator => {
+  return routerFactory(path, 'put', ...preReqs);
 };
 
 /*
   all router method decorator
 */
-export const All = (path: string): MethodDecorator => {
-  return routerFactory(path, 'all');
+export const All = (
+  path: string, ...preReqs: RequestHandler[]
+): MethodDecorator => {
+  return routerFactory(path, 'all', ...preReqs);
 };
 
 /*
-  configure the registed controllers on a express application
+  use router method decorator
+*/
+export const Use = (
+  path: string, ...preReqs: RequestHandler[]
+): MethodDecorator => {
+  return routerFactory(path, 'use', ...preReqs);
+};
+
+/*
+  configure the registed controllers on an express application
 */
 export function configureControllers(app: Express) {
   for (const controller of getControllers()) {
     const prefix: string = getPrefix(controller);
     const routes: Array<RouteBaseType> = getRoutes(controller);
-    
+
     for (const route of routes) {
       const instance = new controller();
-  
+
+      logger('adding route', route, 'with prefix "', prefix, '"');
       app[route.requestMethod](
-        prefix + route.path, throwError(
-          instance[route.routeHandlerMethod].bind(instance)
-        )
+        prefix + route.path,
+        ...[
+          ...route.preReqs,
+          instance[route.routeHandler].bind(instance)
+        ].map(throwError)
       );
     }
   }
