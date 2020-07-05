@@ -1,13 +1,18 @@
-import { RequestHandler } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { Controller, Get } from './controller-base';
 
-export const getIndex: RequestHandler = (req, res, next) => {
-  res.render('index', { 
+@Controller()
+export class IndexRouter {
+  @Get('/')
+  public getIndex(req: Request, res: Response, next: NextFunction) {
+    res.render('index', { 
       title: 'express-tsboilerplate',
       routes: [
-          {
-              path: "/",
-              description: "The page you are seeing right now :)"
-          }
+        {
+          path: '/',
+          description: 'The page you are seeing right now :)'
+        }
       ]
-  });
-};
+    });
+  }
+}
