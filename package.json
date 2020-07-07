@@ -9,7 +9,8 @@
     "debug": "export DEBUG=app:* && npx nodemon --exec npm start",
     "prebuild": "rm -r dist/* || true",
     "build": "npx tsc",
-    "postbuild": "cp -r src/img dist/img && cp -r src/public dist/public && cp -r src/views dist/views"
+    "postbuild": "cp -r src/img dist/img && cp -r src/public dist/public && cp -r src/views dist/views",
+    "syncdb": "export DEBUG=app:* &&  node ./dist/db/syncdb"
   },
   "author": "Rodrigo Martins Racanicci",
   "license": "ISC",
@@ -32,12 +33,15 @@
     "morgan": "^1.10.0",
     "pug": "^3.0.0",
     "reflect-metadata": "^0.1.13",
+    "sequelize": "^5",
+    "sequelize-typescript": "^1.1.0",
     "serve-favicon": "^2.5.0",
     "swagger-jsdoc": "^4.0.0",
     "swagger-ui-express": "^4.1.4",
     "typescript": "^3.9.6"
   },
   "devDependencies": {
+    "sqlite3": "^5.0.0",
     "nodemon": "^2.0.4"
   }
 }
