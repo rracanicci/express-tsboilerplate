@@ -4,7 +4,6 @@ import { Address } from './address';
 
 export class User extends CustomModel {
   public name!: string;
-  public preferredName!: string | null; // for nullable fields
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -13,13 +12,10 @@ export class User extends CustomModel {
 User.init(
   {
     name: {
-      type: new DataTypes.STRING(128),
+      type: new DataTypes.STRING,
       allowNull: false,
-    },
-    preferredName: {
-      type: new DataTypes.STRING(128),
-      allowNull: true,
-    },
+      unique: true
+    }
   },
   {
     sequelize: db, // passing the `sequelize` instance is required
