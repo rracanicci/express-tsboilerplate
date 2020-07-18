@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import { db, CustomModel } from '../sequelize';
-import { Address } from './address';
 
 export class User extends CustomModel {
   public name!: string;
@@ -23,5 +22,5 @@ User.init(
 );
 
 export function associate(): void {
-  User.hasOne(Address);
+  return;
 }
