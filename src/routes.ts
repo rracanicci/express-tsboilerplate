@@ -3,3 +3,4 @@
 */
 import './controllers/index';
 import './controllers/swagger';
+import './controllers/api/users';

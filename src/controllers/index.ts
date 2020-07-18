@@ -1,5 +1,7 @@
+import joi from 'joi';
 import { Request, Response, NextFunction } from 'express';
 import { Controller, Get } from '../utils/controller-base';
+import { validateQuery } from '../middlewares/validation';
 
 @Controller()
 export class IndexRouter {
@@ -12,10 +14,19 @@ export class IndexRouter {
   *      summary: Index Page.
   *      description: Just a simple index page
   */
-  @Get('/')
+  @Get(
+    '/',
+    validateQuery(
+      joi.object({
+        title: joi.string().default('express-tsboilerplate').optional()
+      })
+    )
+  )
   public getIndex(req: Request, res: Response, _next: NextFunction): void {
+    const { title } = req.query;
+
     res.render('index', { 
-      title: 'express-tsboilerplate',
+      title: title,
       routes: [
         {
           path: '/',
