@@ -10,7 +10,7 @@ import config from './config';
 import { NotFound } from 'http-errors';
 import { handleError } from './middlewares/error';
 import { Request, Response, NextFunction } from 'express';
-import { configureControllers } from './controllers/controller-base';
+import { configureControllers } from './utils/controller-base';
 import { json2String } from './utils/parsers';
 
 /*

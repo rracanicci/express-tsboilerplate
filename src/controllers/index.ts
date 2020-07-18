@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Controller, Get } from './controller-base';
+import { Controller, Get } from '../utils/controller-base';
 
 @Controller()
 export class IndexRouter {
