@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  express-tsboilerplate:
+    image: express-tsboilerplate:latest
+    container_name: express-tsboilerplate
+    build:
+      context: .
+    ports: 
+      - 3000:3000
+    environment:
+      - JSON_ERROR=true
+      - DEBUG=app:*
+      - NODE_ENV=development
