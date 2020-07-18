@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import debug from 'debug';
 import { Express, RequestHandler } from 'express';
 import { throwError } from '../utils/error-handling';
@@ -54,7 +51,7 @@ function addController(controller: any) {
 /*
   get the controller prefix
 */
-function getControllerData(target: Object) : ControllerDataType {
+function getControllerData(target: any) : ControllerDataType {
   if (!Reflect.hasMetadata('controllerData', target)) {
     Reflect.defineMetadata('controllerData', {
       prefix: '',
@@ -67,14 +64,14 @@ function getControllerData(target: Object) : ControllerDataType {
 /*
   set the controller prefix
 */
-function setControllerData(data: ControllerDataType, target: Object) {
+function setControllerData(data: ControllerDataType, target: any) {
   Reflect.defineMetadata('controllerData', data, target);
 }
 
 /*
   get the controller registered routes
 */
-function getRoutes(target: Object) : Array<RouteBaseType>{
+function getRoutes(target: any) : Array<RouteBaseType>{
   if (!Reflect.hasMetadata('routes', target)) {
     Reflect.defineMetadata('routes', [], target);
   }
@@ -84,7 +81,7 @@ function getRoutes(target: Object) : Array<RouteBaseType>{
 /*
   add a new route to the controller
 */
-function addRoute(route: RouteBaseType | null, target: Object): void {
+function addRoute(route: RouteBaseType | null, target: any): void {
   if (route) {
     const routes = getRoutes(target);
 
@@ -99,7 +96,7 @@ function addRoute(route: RouteBaseType | null, target: Object): void {
 function routerFactory(
   path: string, requestMethod: RequestMethod, ...preReqs: RequestHandler[]
 ) {
-  return (target: Object, routeHandler: string | symbol): void => {
+  return (target: any, routeHandler: string | symbol): void => {
     addRoute({
       path: path,
       requestMethod: requestMethod,
