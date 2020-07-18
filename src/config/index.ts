@@ -4,8 +4,6 @@ import { Options } from 'sequelize';
 /*
   type denifitions
 */
-export type EnvType = 'development' | 'test' | 'production';
-
 export type ConfigType = {
   app: {
     port: number,
@@ -17,16 +15,8 @@ export type ConfigType = {
     password?: string,
     options?: Options
   }
-  nodeenv: EnvType
+  nodeenv: 'development' | 'test' | 'production'
 };
-
-/*
-  running environment
-*/
-let env : EnvType = (
-  (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') ?
-    process.env.NODE_ENV : 'development'
-);
 
 /*
   actual configuration for all environments
@@ -47,7 +37,10 @@ let config = {
       storage: getVar('DB_STORAGE', 'db.sqlite')
     }
   },
-  nodeenv: env
+  nodeenv: (
+    process.env.NODE_ENV === 'production' ||
+    process.env.NODE_ENV === 'test'
+  ) ? process.env.NODE_ENV : 'development'
 };
 
 export default config as ConfigType;

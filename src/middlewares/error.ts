@@ -1,12 +1,15 @@
+import config from './../config';
 import { ErrorRequestHandler } from 'express';
-import { ConfigType } from '../config';
 
+/*
+  error handling middleware
+  this will return the error as JSON is JSON_ERROR is set to true
+  or render a view otherwire
+*/
 export const handleError: ErrorRequestHandler = (err, req, res, next) => {
-  const config: ConfigType = req.app.get('config');
-
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error   = config.nodeenv === 'development' ? err : {};
+  res.locals.error = config.nodeenv === 'development' ? err : {};
 
   // setup response
   res.status(err.status || 500);

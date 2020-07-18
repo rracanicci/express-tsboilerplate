@@ -2,14 +2,12 @@ import 'reflect-metadata';
 import debug from 'debug';
 import http from 'http';
 import app from '../app';
-import { ConfigType } from '../config';
+import config from '../config';
 
 /*
   declarations
 */
 const logger = debug('app:server');
-const config: ConfigType = app.get('config');
-
 /*
   set PORT on express
 */

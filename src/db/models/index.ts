@@ -1,3 +1,7 @@
+/*
+  import this file in the project that all models present in db/models
+  will be automatically imported to sequelize
+*/
 import { readdirSync } from 'fs';
 import { basename, join } from 'path';
 import { debug } from 'debug';
