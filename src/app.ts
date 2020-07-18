@@ -1,30 +1,33 @@
+import './routes';
 import path from 'path';
 import debug from 'debug';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import favicon from 'serve-favicon';
+import cors from 'cors';
+import express from 'express';
+import config from './config';
 import { NotFound } from 'http-errors';
-import express, { Request, Response, NextFunction } from 'express';
-import config, { ConfigType } from './config';
 import { handleError } from './middlewares/error';
+import { Request, Response, NextFunction } from 'express';
 import { configureControllers } from './controllers/controller-base';
-import './routes';
+import { json2String } from './utils/parsers';
 
 /*
-    declarations
+  declarations
 */
 const logger = debug('app:app');
 
 /*
-    app setup
+  app setup
 */
 const app = express();
 
 // set global config to be used latter on
 app.set('config', config);
 
-if (config.isDev) {
-  logger('config: ', app.get('config') as ConfigType);
+if (config.nodeenv === 'development') {
+  logger('config: ', json2String(config));
 }
 
 // serving favicon file
@@ -35,6 +38,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // middlewares
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

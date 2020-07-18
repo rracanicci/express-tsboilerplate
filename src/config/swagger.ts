@@ -1,4 +1,5 @@
 const swaggerConfig = {
+  openapi: '3.0.3',
   swaggerDefinition: {
     info: {
       title: 'Express Typescript Boilerplate',

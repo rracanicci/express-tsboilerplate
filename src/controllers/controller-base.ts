@@ -1,6 +1,6 @@
-import { Express, RequestHandler } from 'express';
-import { throwError } from '../middlewares/error';
 import debug from 'debug';
+import { Express, RequestHandler } from 'express';
+import { throwError } from '../utils/error-handling';
 
 const logger = debug('app:controllerbase');
 
@@ -181,10 +181,11 @@ export function configureControllers(app: Express) {
 
     for (const route of routes) {
       const instance = new controller();
+      const path = prefix + route.path;
 
-      logger('adding route', route, 'with prefix "', prefix, '"');
+      logger(`adding route "${path}"`);
       app[route.requestMethod](
-        prefix + route.path,
+        path,
         ...[
           ...route.preReqs,
           instance[route.routeHandler].bind(instance)

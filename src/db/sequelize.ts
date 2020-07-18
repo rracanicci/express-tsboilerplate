@@ -1,8 +1,15 @@
-import { Sequelize } from 'sequelize';
 import config from '../config';
-import _ from 'lodash';
+import { Sequelize, Model } from 'sequelize';
 
-export const sequelize = new Sequelize(
+/*
+  use this model do add extra features to all models
+*/
+export class CustomModel extends Model {}
+
+/*
+  sequelize instance to be used application wide
+*/
+export const db = new Sequelize(
   config.db.database,
   config.db.username,
   config.db.password,

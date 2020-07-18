@@ -1,10 +1,10 @@
 import { readFileSync } from 'fs';
 
 /*
-  - look for the environment variable named "name"
-  - if not found, look for the same variable with the sufix _FILE to get the file
-    content
-  - if not found, return the default value 
+  look for the environment variable named "name"
+  if not found, look for the same variable with the sufix _FILE to get the file
+  content
+  if not found, return the default value 
 */
 export function getVar(name: string , defaultValue: string = '') {
   if (process.env[name]) {
@@ -24,4 +24,11 @@ export function getVar(name: string , defaultValue: string = '') {
 */
 export function string2Bool(value: string) {
   return (/true/i).test(value);
+}
+
+/*
+  converts a JSON object or array to a well formatted string
+*/
+export function json2String(value: any) {
+  return JSON.stringify(value, null, 2).replace(/\n/gi, '\n  ');
 }

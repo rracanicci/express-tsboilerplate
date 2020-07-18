@@ -1,8 +1,8 @@
-import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import { DataTypes } from 'sequelize';
+import { db, CustomModel } from '../sequelize';
 import { User } from './user';
 
-export class Address extends Model {
+export class Address extends CustomModel {
   public address!: string;
 
   public readonly createdAt!: Date;
@@ -17,7 +17,7 @@ Address.init(
     },
   },
   {
-    sequelize, // passing the `sequelize` instance is required
+    sequelize: db, // passing the `sequelize` instance is required
   }
 );
 

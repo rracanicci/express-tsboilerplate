@@ -20,6 +20,10 @@ export class IndexRouter {
         {
           path: '/',
           description: 'The page you are seeing right now :)'
+        },
+        {
+          path: '/swagger',
+          description: 'Swagger documentation'
         }
       ]
     });

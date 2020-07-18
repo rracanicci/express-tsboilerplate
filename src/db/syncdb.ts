@@ -1,9 +1,9 @@
-import { sequelize } from './sequelize';
 import './models';
+import { db } from './sequelize';
 import { User } from './models/user';
 
 (async() => {
-  await sequelize.sync({ force: true });
+  await db.sync({ force: true });
 
   await User.bulkCreate<User>([{
     name: 'rodrigo'
