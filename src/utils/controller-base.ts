@@ -11,6 +11,14 @@ type RequestMethod
   = 'get' | 'post' | 'delete' | 'options' | 'put' | 'all' | 'use';
 
 /*
+  base interface for a controller data type
+*/
+interface ControllerDataType {
+  prefix: string;
+  preReqs: RequestHandler[];
+}
+
+/*
   base interface for a router type
 */
 interface RouteBaseType {
@@ -37,25 +45,27 @@ function addController(controller: any) {
   const controllers = getControllers();
 
   controllers.push(controller);
-
   Reflect.defineMetadata('controller', controllers, getControllers);
 }
 
 /*
   get the controller prefix
 */
-function getPrefix(target: Object) : string {
-  if (!Reflect.hasMetadata('prefix', target)) {
-    Reflect.defineMetadata('prefix', '', target);
+function getControllerData(target: Object) : ControllerDataType {
+  if (!Reflect.hasMetadata('controllerData', target)) {
+    Reflect.defineMetadata('controllerData', {
+      prefix: '',
+      preReqs: []
+    }, target);
   }
-  return Reflect.getMetadata('prefix', target);
+  return Reflect.getMetadata('controllerData', target);
 }
 
 /*
   set the controller prefix
 */
-function setPrefix(prefix: string, target: Object) {
-  Reflect.defineMetadata('prefix', prefix, target);
+function setControllerData(data: ControllerDataType, target: Object) {
+  Reflect.defineMetadata('controllerData', data, target);
 }
 
 /*
@@ -76,7 +86,6 @@ function addRoute(route: RouteBaseType | null, target: Object): void {
     const routes = getRoutes(target);
 
     routes.push(route);
-
     Reflect.defineMetadata('routes', routes, target);
   }
 }
@@ -100,10 +109,12 @@ function routerFactory(
 /*
   class controller decorator
 */
-export const Controller = (prefix: string = ''): ClassDecorator => {
+export const Controller = (
+  prefix: string = '', ...preReqs: RequestHandler[]
+): ClassDecorator => {
   return (target: any) => {
     addController(target);
-    setPrefix(prefix, target);
+    setControllerData({ prefix: prefix, preReqs: preReqs }, target);
     addRoute(null, target);
   };
 };
@@ -176,21 +187,22 @@ export const Use = (
 */
 export function configureControllers(app: Express) {
   for (const controller of getControllers()) {
-    const prefix: string = getPrefix(controller);
-    const routes: Array<RouteBaseType> = getRoutes(controller);
+    const controllerData = getControllerData(controller);
+    const routes = getRoutes(controller);
 
     for (const route of routes) {
       const instance = new controller();
-      const path = prefix + route.path;
+      const path = controllerData.prefix + route.path;
 
       logger(`adding route "${path}"`);
       app[route.requestMethod](
         path,
         ...[
+          ...controllerData.preReqs,
           ...route.preReqs,
           instance[route.routeHandler].bind(instance)
         ].map(throwError)
       );
-    }
+    };
   }
 }
