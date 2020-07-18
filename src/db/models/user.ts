@@ -26,6 +26,6 @@ User.init(
   }
 );
 
-export function associate() {
+export function associate(): void {
   User.hasOne(Address);
 }

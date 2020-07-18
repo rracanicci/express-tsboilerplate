@@ -6,7 +6,7 @@ import { ErrorRequestHandler } from 'express';
   this will return the error as JSON is JSON_ERROR is set to true
   or render a view otherwire
 */
-export const handleError: ErrorRequestHandler = (err, req, res, next) => {
+export const handleError: ErrorRequestHandler = (err, _req, res, _next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = config.nodeenv === 'development' ? err : {};

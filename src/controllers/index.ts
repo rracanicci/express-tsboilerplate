@@ -13,7 +13,7 @@ export class IndexRouter {
   *      description: Just a simple index page
   */
   @Get('/')
-  public getIndex(req: Request, res: Response, next: NextFunction) {
+  public getIndex(req: Request, res: Response, _next: NextFunction): void {
     res.render('index', { 
       title: 'express-tsboilerplate',
       routes: [

@@ -9,7 +9,9 @@ import {
   handling middleware
 */
 export function throwError(func: RequestHandler) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: Request, res: Response, next: NextFunction
+  ): Promise<void> => {
     try {
       await func(req, res, next);
     }

@@ -10,7 +10,8 @@
     "prebuild": "rm -r dist/* || true",
     "build": "npx tsc",
     "postbuild": "cp -r src/img dist/img && cp -r src/public dist/public && cp -r src/views dist/views",
-    "syncdb": "export DEBUG=app:* && node ./dist/db/syncdb"
+    "syncdb": "export DEBUG=app:* && node ./dist/db/syncdb",
+    "eslint": "npx eslint src/"
   },
   "author": "Rodrigo Martins Racanicci",
   "license": "ISC",
@@ -43,7 +44,10 @@
     "typescript": "^3.9.6"
   },
   "devDependencies": {
-    "sqlite3": "^5.0.0",
-    "nodemon": "^2.0.4"
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
+    "eslint": "^7.4.0",
+    "nodemon": "^2.0.4",
+    "sqlite3": "^5.0.0"
   }
 }

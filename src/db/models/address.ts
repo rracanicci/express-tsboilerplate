@@ -21,6 +21,6 @@ Address.init(
   }
 );
 
-export function associate() {
+export function associate(): void {
   Address.belongsTo(User);
 }

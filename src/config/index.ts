@@ -21,7 +21,7 @@ export type ConfigType = {
 /*
   actual configuration for all environments
 */
-let config = {
+const config = {
   app: {
     port: +getVar('PORT', '3000'),
     jsonError: string2Bool(
@@ -31,7 +31,7 @@ let config = {
   db: {
     database: getVar('DB_DATABASE', 'db_dev'),
     username: getVar('DB_USERNAME', ''),
-    password: getVar('DB_PASSWORD', undefined),
+    password: getVar('DB_PASSWORD', ''),
     options: {
       dialect: getVar('DB_DIALECT', 'sqlite'),
       storage: getVar('DB_STORAGE', 'db.sqlite')

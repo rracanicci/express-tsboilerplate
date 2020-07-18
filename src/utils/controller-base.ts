@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import debug from 'debug';
 import { Express, RequestHandler } from 'express';
 import { throwError } from '../utils/error-handling';
@@ -110,7 +113,7 @@ function routerFactory(
   class controller decorator
 */
 export const Controller = (
-  prefix: string = '', ...preReqs: RequestHandler[]
+  prefix = '', ...preReqs: RequestHandler[]
 ): ClassDecorator => {
   return (target: any) => {
     addController(target);
@@ -185,7 +188,7 @@ export const Use = (
 /*
   configure the registed controllers on an express application
 */
-export function configureControllers(app: Express) {
+export function configureControllers(app: Express): void {
   for (const controller of getControllers()) {
     const controllerData = getControllerData(controller);
     const routes = getRoutes(controller);
@@ -203,6 +206,6 @@ export function configureControllers(app: Express) {
           instance[route.routeHandler].bind(instance)
         ].map(throwError)
       );
-    };
+    }
   }
 }

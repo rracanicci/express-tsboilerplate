@@ -6,7 +6,7 @@ import { readFileSync } from 'fs';
   content
   if not found, return the default value 
 */
-export function getVar(name: string , defaultValue: string = '') {
+export function getVar(name: string , defaultValue = ''): string {
   if (process.env[name]) {
     return (process.env[name] as string).toLowerCase();
   }
@@ -22,13 +22,13 @@ export function getVar(name: string , defaultValue: string = '') {
 /*
   parse a string to boolean
 */
-export function string2Bool(value: string) {
+export function string2Bool(value: string): boolean {
   return (/true/i).test(value);
 }
 
 /*
   converts a JSON object or array to a well formatted string
 */
-export function json2String(value: any) {
+export function json2String<T>(value: T): string {
   return JSON.stringify(value, null, 2).replace(/\n/gi, '\n  ');
 }
