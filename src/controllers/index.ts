@@ -25,7 +25,7 @@ export class IndexRouter {
   public getIndex(req: Request, res: Response, _next: NextFunction): void {
     const { title } = req.query;
 
-    res.render('index', { 
+    res.render('index', {
       title: title,
       routes: [
         {

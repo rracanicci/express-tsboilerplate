@@ -4,7 +4,7 @@ import { throwError } from '../utils/error-handling';
 
 const logger = debug('app:controllerbase');
 
-/* 
+/*
   supported Request Methods
 */
 type RequestMethod

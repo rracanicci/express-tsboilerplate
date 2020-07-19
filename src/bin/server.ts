@@ -24,7 +24,7 @@ server.on('error', (error: Error) => { throw error; });
 server.on('listening', () => {
   const addr = server.address();
   logger('listening on ' + (
-    typeof addr === 'string' ? 
+    typeof addr === 'string' ?
       'pipe ' + addr : 'port ' + addr?.port
   ));
 });

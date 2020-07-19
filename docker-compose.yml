@@ -6,7 +6,7 @@ services:
     container_name: express-tsboilerplate
     build:
       context: .
-    ports: 
+    ports:
       - 3000:3000
     environment:
       - JSON_ERROR=true
