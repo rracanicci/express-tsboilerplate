@@ -12,7 +12,7 @@ const swaggerConfig = {
     },
     basePath: '/'
   },
-  apis: ['dist/controllers/*.js', 'dist/api-docs/*.yml']
+  apis: ['dist/controllers/*.js', 'dist/api-docs/*']
 };
 
 export default swaggerConfig;

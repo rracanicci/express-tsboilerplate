@@ -47,7 +47,7 @@ app.use(cookieParser());
 // routes
 configureControllers(app);
 
-// serving static files for JS and CSS
+// serving static files
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // catch 404 and forward to error handler

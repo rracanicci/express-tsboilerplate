@@ -117,11 +117,153 @@ For logging the application relies on the [debug module](https://www.npmjs.com/p
 
 # Route controllers
 
+## Creating routes
+In order to easly create application routes a set of decorators was developed at the [controller-base](./src/utils/controller-base.ts) utility file:
+
+* Controller
+* Get
+* Post
+* Delete
+* Options
+* Put
+* All
+* Use
+
+To create a set of routes, just create a controller file such as:
+
+```typescript
+@Controller('/api/example')
+export class ExampleRouter {
+  @Get('/')
+  public async get(
+    req: Request, res: Response, next: NextFunction
+  ): Promise<void> { ... }
+
+  @Post('/')
+  public async create(
+    req: Request, res: Response, next: NextFunction
+  ): Promise<void> { ... }
+
+  @Put('/:id')
+  public async update(
+    req: Request, res: Response, next: NextFunction
+  ): Promise<void> { ... }
+
+  @Delete('/:id')
+  public async delete(
+    req: Request, res: Response, _next: NextFunction
+  ): Promise<void> { ... }
+}
+```
+
+To make the route visible, go to the [routes file](./src/routes.ts) and import your controller:
+
+```typescript
+/*
+  import all your controller routes here
+*/
+import './controllers/index';
+import './controllers/swagger';
+import './controllers/api/users';
+import './controolers/api/example';
+```
+
+Once you do this, the function **configureControllers** from the [controller-base](./src/utils/controller-base.ts) will automatically map and create the routes (check the [app.ts file](./src/app.ts)).
+
+## Adding middlewares to specific routes
+
+If you need to add middlewares for a specific route or even to a entire controller, just add the middlewares to be called before the route in the decorator call:
+
+```typescript
+@Controller('/api/example', <your middlewares go here>)
+export class ExampleRouter {
+  @Get('/', <your middlewares go here>)
+  public async get(
+    req: Request, res: Response, next: NextFunction
+  ): Promise<void> { ... }
+```
+
+For a full example, check the example [/api/users route](./src/controllers/api/users.ts).
+
 # Validation
+
+To validate URL parameters, query parameters and JSON body parameters a set of middlewares is avaible at the [validation middleware file](./src/middlewares/validation.ts):
+
+* validateParams
+* validateQuery
+* validateBody
+
+Add them as a pre requirement for a route or controller. They will perform the validation using a Joi Schema and return a Bad Request with the correct error message in case validation fails.
+If validation succeeds, the validated objects (**req.params**, **req.query** and **req.body**) will be replaced in the request, including type convertions and default values:
+
+```typescript
+@Controller('/api/users')
+export class UsersRouter {
+  @Put(
+    '/:id',
+    validateParams(
+      joi.object({
+        id: joi.number().positive().required()
+      })
+    ),
+    validateBody(
+      joi.object({
+        name: joi.string().min(1).max(255).required()
+      })
+    )
+  )
+  public async update(
+    req: Request, res: Response, next: NextFunction
+  ): Promise<void> {
+    const { id } = req.params;
+    const { name } = req.body;
+    ...
+  }
+}
+```
+
+A full example can be seen at the [/api/users route](./src/controllers/api/users.ts).
 
 # Error handling
 
+An [error handling middleware](./src/middlewares/error.ts) is used to handle errors. It can both render a view or return a JSON error depending on the JSON_ERROR variable value. 
+
+Also, all routes and middlewares used with the decoratoros described [here](#creating-routes) will be wrapped with the function [**throwError**](./src/utils/error-handling.ts), that automatically redirects uncatched erros to the error handling middleware.
+
 # API Documentation
+
+To provide API documentation the project uses the modules [swagger-jsdoc](https://www.npmjs.com/package/swagger-jsdoc) and [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express). The configuration for them can be found in the [swagger config file](./src/config/swagger.ts).
+
+So, to documment an API you can boh add comments to the code, as the [IndexRouter example](./src/controllers/index.ts):
+
+```typescript
+@Controller()
+export class IndexRouter {
+  /**
+  * @swagger
+  * /:
+  *    get:
+  *      tags:
+  *          - Index
+  *      summary: Index Page.
+  *      description: Just a simple index page
+  */
+  @Get(
+    '/',
+    validateQuery(
+      joi.object({
+        title: joi.string().default('express-tsboilerplate').optional()
+      })
+    )
+  )
+  public getIndex(req: Request, res: Response, _next: NextFunction): void {
+    const { title } = req.query;
+    ...
+```
+
+Or create a swagger definition file under the folder [src/api-docs](./src/api-docs).
+
+Once you bring the application up there will be a route [**/swagger**](./src/controllers/swagger.ts) with the documentation.
 
 # Database models
 ## Creating models
@@ -129,4 +271,19 @@ For logging the application relies on the [debug module](https://www.npmjs.com/p
 
 # Public folder
 
+If you need to expose some static files, just place them inside the [src/public](./src/public) and access it through the route **/public/...**.
+
+This feature is defined at the [app.ts](src/app.ts) file:
+
+```typescript
+// serving static files
+app.use('/public', express.static(path.join(__dirname, 'public')));
+```
+
 # ESLint support
+
+ESLint configuration can be found in the file [.eslintrc.json](./.eslintrc.json). To run use:
+
+```bash
+> npm run eslint
+```
