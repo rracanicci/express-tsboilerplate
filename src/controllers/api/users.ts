@@ -20,18 +20,22 @@ export class UsersRouter {
     )
   )
   public async get(
-    req: Request, res: Response, _next: NextFunction
+    req: Request, res: Response, next: NextFunction
   ): Promise<void> {
     const { id, name } = req.query;
-
-    res.json(await User.findAll({
+    const users: User[] = await User.findAll({
       where: _.pickBy({
         id: id,
         name: name ? {
           [Op.like]: `%${name}%`
         } : undefined
       }, _.identity) as any
-    }));
+    });
+
+    if (users.length == 0) {
+      return next(new NotFound('no user found'));
+    }
+    res.json(users);
   }
 
   @Post(

@@ -9,7 +9,7 @@
     "debug": "export DEBUG=app:* && npx nodemon --exec npm start",
     "prebuild": "rm -r dist/* || true",
     "build": "npx tsc",
-    "postbuild": "cp -r src/img dist/img && cp -r src/public dist/public && cp -r src/views dist/views",
+    "postbuild": "cp -r src/img dist/img && cp -r src/public dist/public && cp -r src/views dist/views && cp -r src/api-docs dist/api-docs",
     "syncdb": "export DEBUG=app:* && node ./dist/db/syncdb",
     "eslint": "npx eslint src/"
   },

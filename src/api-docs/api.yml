@@ -1,0 +1,178 @@
+openapi: "3.0.3"
+
+info:
+ title: Express Typescript Boilerplate
+ description: Example REST API
+ version: 0.0.1
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Get users
+      description: Returns a list of users
+      parameters:
+        - $ref: '#/components/parameters/IdFilter'
+        - $ref: '#/components/parameters/NameFilter'
+      responses:
+        '200':
+          description: A JSON array of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserFullShema'
+        '404':
+          description: No user found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Something went wrong
+
+    post:
+      tags:
+        - Users
+      summary: Create user
+      description: Create a new user
+      requestBody:
+        $ref: '#/components/requestBodies/UserBody'
+      responses:
+        '201':
+          description: The created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFullShema'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Something went wrong
+
+  /api/users/{id}:
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: Update and/or create a new user
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/UserBody'
+      responses:
+        '200':
+          description: The updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFullShema'
+        '201':
+          description: The created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFullShema'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Something went wrong
+
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Delete an existing user
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: The deleted user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFullShema'
+        '404':
+          description: No user found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Something went wrong
+
+components:
+  schemas:
+    UserFullShema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User ID
+        name:
+          type: string
+          description: User Name
+      example:   # Sample object
+        id: 10
+        name: 'Rodrigo'
+    ErrorSchema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+
+  parameters:
+    IdFilter:
+      in: query
+      required: false
+      name: id
+      description: User ID filter
+      schema:
+        type: integer
+        example: 1
+    NameFilter:
+      in: query
+      required: false
+      name: name
+      description: User name filter
+      schema:
+        type: string
+        example: rodrigo
+    IdPath:
+      in: path
+      required: true
+      name: id
+      description: User ID
+      schema:
+        type: integer
+        example: 1
+
+  requestBodies:
+    UserBody:
+      description: A JSON object containing user information
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: User Name
+            example:   # Sample object
+              name: 'Rodrigo'

@@ -1,6 +1,6 @@
 const swaggerConfig = {
-  openapi: '3.0.3',
   swaggerDefinition: {
+    openapi: '3.0.3',
     info: {
       title: 'Express Typescript Boilerplate',
       version: '0.0.1',
@@ -12,7 +12,7 @@ const swaggerConfig = {
     },
     basePath: '/'
   },
-  apis: ['dist/controllers/*.js']
+  apis: ['dist/controllers/*.js', 'dist/api-docs/*.yml']
 };
 
 export default swaggerConfig;
