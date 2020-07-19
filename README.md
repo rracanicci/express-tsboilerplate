@@ -12,6 +12,17 @@ Boilerplate to work with express using typescript. The boilerplate includes:
 - Docker setup files, including [Dockerfile](./Dockerfile) and [docker-compose](./docker-compose.yml)
 - ESLint to check code quality
 
+# Table of Contents
+- [Setup](#setup)
+- [Logging](#logging)
+- [Route controllers](#route-controllers)
+- [Validation](#validation)
+- [Error handling](#error-handling)
+- [API Documentation](#api-documentation)
+- [Database models](#database-models)
+- [Public folder](#public-folder)
+- [ESLint support](#eslint-support)
+
 # Setup
 
 ## Nodejs run
@@ -267,8 +278,9 @@ Once you bring the application up there will be a route [**/swagger**](./src/con
 
 # Database models
 ## Creating models
+TODO
 ## Synchronizing database
-
+TODO
 # Public folder
 
 If you need to expose some static files, just place them inside the [src/public](./src/public) and access it through the route **/public/...**.
