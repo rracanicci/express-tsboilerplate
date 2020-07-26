@@ -47,7 +47,7 @@ Build the application using:
 
 As the code uses typescript, this command will cleanup any previoues builds from the **dist** directory, build the application using **tsc** and than copy [src/img](./src/img), [src/public](./src/public), [src/views](./src/views) and [src/api-docs](./src/api-docs) to the **dist** folder.
 
-To actually bring the application up you can both use the following code to start using raw node:
+To actually bring the application up you can use the following code to start using raw node:
 
 ```bash
 > npm start
@@ -78,13 +78,13 @@ This will build the image following the [Dockerfile](./Dockerfile) and bring the
 
 ## Tunning configurations
 
-Configuration can be read from the [configuration file](./src/config/index.ts). You can read de configurations application with just:
+Configuration can be read from the [configuration file](./src/config/index.ts). You can access the application's configurations with just:
 
 ```typescript
-import config from 'config;'
+import config from 'config';
 ```
 
-For each configuration there is a linked environment variable which can be set to tune the configuration. Besides, if **_FILE** is added to the variable name, the application will look for the file pointed by the variable value and load the value config value from the file (this provides support to docker secrets).
+For each configuration there is a linked environment variable which can be set to tune the configuration. Besides, if **_FILE** is added to the variable name, the application will look for the file pointed by the variable value and load the config value from the file (helpful to use with docker secrets).
 
 The current configuration is:
 
@@ -94,7 +94,7 @@ const config = {
   app: {
     // port the application should run
     port: +getVar('PORT', '3000'),
-    // indicaticates wheather errors can be returned as JSON
+    // indicaticates wheather errors should be returned as JSON
     // or if a HTML page should be rendered
     jsonError: string2Bool(
       getVar('JSON_ERROR', 'false')
@@ -111,6 +111,7 @@ const config = {
       storage: getVar('DB_STORAGE', 'db.sqlite')
     }
   },
+  // application environment
   nodeenv: (
     process.env.NODE_ENV === 'production' ||
     process.env.NODE_ENV === 'test'
@@ -118,7 +119,7 @@ const config = {
 };
 ```
 
-The **getVar** method looks for environment varible, if the it is not found, the default value used as second parameter will be used. For more info check [here](./src/utils/parsers.ts).
+The **getVar** function looks for the environment varible, if the it is not found, the default value passed as second parameter will be used. For more info check [here](./src/utils/parsers.ts).
 
 # Logging
 
@@ -237,7 +238,7 @@ A full example can be seen at the [/api/users route](./src/controllers/api/users
 
 # Error handling
 
-An [error handling middleware](./src/middlewares/error.ts) is used to handle errors. It can both render a view or return a JSON error depending on the JSON_ERROR variable value. 
+An [error handling middleware](./src/middlewares/error.ts) is used to handle errors. It can both render a view or return a JSON error depending on the JSON_ERROR variable value.
 
 Also, all routes and middlewares used with the decoratoros described [here](#creating-routes) will be wrapped with the function [**throwError**](./src/utils/error-handling.ts), that automatically redirects uncatched erros to the error handling middleware.
 
@@ -277,10 +278,153 @@ Or create a swagger definition file under the folder [src/api-docs](./src/api-do
 Once you bring the application up there will be a route [**/swagger**](./src/controllers/swagger.ts) with the documentation.
 
 # Database models
+If you need to work with databases, the [Sequelize](https://sequelize.org/) module can be very useful. You can use it to define models and easely manipulate data in the application. The boilerplate has been already configured to work with Sequelize.
+
 ## Creating models
-TODO
+To create a new model, go to the [models directory](src/db/models) and create a file to represent the model, such as [user.ts](src/db/models/user.ts):
+
+```typescript
+import { DataTypes } from 'sequelize';
+import { db, CustomModel } from '../sequelize';
+
+export class User extends CustomModel {
+  public name!: string;
+
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+User.init(
+  {
+    name: {
+      type: new DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    }
+  },
+  {
+    sequelize: db, // passing the `sequelize` instance is required
+  }
+);
+
+export function associate(): void {
+  return;
+}
+```
+
+The _associate_ function can be used to define associatons with other modules, such as _belongsToMany_, _belongsTo_, _hasOne_ and _hasMany_. For more information check the [official sequelize documentation](https://sequelize.org/master/manual/assocs.html).
+
+## How models are imported into sequelize
+The [index file](src/db/models/index.ts) is responsible for importing all the modules, creating the associations and making the modules visible to sequelize. So it should be imported once into your application, such as in the [app.ts](src/app.ts) file:
+
+```typescript
+import './routes';
+import './db/models'; // <--
+import path from 'path';
+import debug from 'debug';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import favicon from 'serve-favicon';
+import cors from 'cors';
+import express from 'express';
+import config from './config';
+import { NotFound } from 'http-errors';
+import { handleError } from './middlewares/error';
+import { Request, Response, NextFunction } from 'express';
+import { configureControllers } from './utils/controller-base';
+import { json2String } from './utils/parsers';
+
+/*
+  declarations
+*/
+const logger = debug('app:app');
+
+/*
+  app setup
+*/
+const app = express();
+
+```
+
+## Customizing the base model
+If you need to add methods to all models at once, just add them to the [base model](src/db/sequelize.ts):
+
+```typescript
+import config from '../config';
+import { Sequelize, Model } from 'sequelize';
+
+/*
+  use this model do add extra features to all models
+*/
+export class CustomModel extends Model {} // <--
+
+/*
+  sequelize instance to be used application wide
+*/
+export const db = new Sequelize(
+  config.db.database,
+  config.db.username,
+  config.db.password,
+  config.db.options
+);
+```
+
+## Using models
+In order to use and/or query models, just import them:
+
+```typescript
+import _ from 'lodash';
+import joi from 'joi';
+import { Request, Response, NextFunction } from 'express';
+import { Controller, Get, Post, Put, Delete } from '../../utils/controller-base';
+import { validateQuery, validateBody, validateParams } from '../../middlewares/validation';
+import { User } from '../../db/models/user';  // <--
+import { Op, UniqueConstraintError } from 'sequelize';
+import { Conflict, NotFound } from 'http-errors';
+import { db } from '../../db/sequelize';
+
+@Controller('/api/users')
+export class UsersRouter {
+  @Get(
+    '/',
+    validateQuery(
+      joi.object({
+        id: joi.number().positive().optional(),
+        name: joi.string().min(1).max(255).optional()
+      })
+    )
+  )
+  public async get(
+    req: Request, res: Response, next: NextFunction
+  ): Promise<void> {
+    const { id, name } = req.query;
+    const users: User[] = await User.findAll({  // <--
+      where: _.pickBy({
+        id: id,
+        name: name ? {
+          [Op.like]: `%${name}%`
+        } : undefined
+      }, _.identity) as any
+    });
+
+    if (users.length == 0) {
+      return next(new NotFound('no user found'));
+    }
+    res.json(users);
+  }
+  ...
+```
+A full example can be found [here](src/controllers/api/users.ts).
+
 ## Synchronizing database
-TODO
+To destroy the database and rebuild based on the models call:
+
+```bash
+> npm run syncdb
+```
+
+More details can be found in [this file](src/db/syncdb.ts).
+
 # Public folder
 
 If you need to expose some static files, just place them inside the [src/public](./src/public) and access it through the route **/public/...**.

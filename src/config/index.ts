@@ -26,7 +26,7 @@ const config = {
   app: {
     // port the application should run
     port: +getVar('PORT', '3000'),
-    // indicaticates wheather errors can be returned as JSON
+    // indicaticates wheather errors should be returned as JSON
     // or if a HTML page should be rendered
     jsonError: string2Bool(
       getVar('JSON_ERROR', 'false')

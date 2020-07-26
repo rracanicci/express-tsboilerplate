@@ -1,4 +1,5 @@
 import './routes';
+import './db/models';
 import path from 'path';
 import debug from 'debug';
 import cookieParser from 'cookie-parser';
