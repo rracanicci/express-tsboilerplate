@@ -36,7 +36,7 @@
     "joi": "^17.1.1",
     "lodash": "^4.17.19",
     "morgan": "^1.10.0",
-    "pug": "^3.0.0",
+    "pug": "^3.0.1",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^5",
     "sequelize-typescript": "^1.1.0",
